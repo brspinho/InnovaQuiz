@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
+    "tunnel": "npx ngrok http --domain=joline-sinlike-herbaceously.ngrok-free.dev 3000",
     "install-all": "npm install && cd server && npm install"
   },
   "devDependencies": {
