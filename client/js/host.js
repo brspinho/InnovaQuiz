@@ -155,6 +155,7 @@ const hostGame = {
     
     const specialImg = document.getElementById('host-special-img');
     if (data.index === data.total - 1) {
+      specialImg.src = 'assets/homem-inovacao.png'; // Force src set
       specialImg.style.display = 'block';
     } else {
       specialImg.style.display = 'none';
