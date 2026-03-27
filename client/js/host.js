@@ -146,32 +146,35 @@ const hostGame = {
   },
 
   showQuestion(data) {
-    document.getElementById('host-lobby').style.display = 'none';
-    document.getElementById('host-results').style.display = 'none';
+    this.hideAll();
     document.getElementById('host-question').style.display = 'block';
-
+    
     document.getElementById('host-q-counter').textContent = `Pergunta ${data.index + 1} / ${data.total}`;
     document.getElementById('host-question-text').textContent = data.question;
     document.getElementById('host-answer-progress').textContent = `0 / ${data.playerCount} responderam`;
+    
+    const specialImg = document.getElementById('host-special-img');
+    if (data.index === data.total - 1) {
+      specialImg.style.display = 'block';
+    } else {
+      specialImg.style.display = 'none';
+    }
 
-    // Render options
-    const optClasses = ['opt-a', 'opt-b', 'opt-c', 'opt-d'];
-    const optIcons   = ['▲', '◆', '●', '■'];
     const grid = document.getElementById('host-options-grid');
     grid.innerHTML = data.options.map((opt, i) => `
-      <div class="host-option ${optClasses[i]}">
-        <span>${optIcons[i]}</span> ${opt}
+      <div class="host-option-item opt-${['a','b','c','d'][i]}">
+        <span class="opt-label">${['▲','◆','●','■'][i]}</span>
+        <span class="opt-text">${opt}</span>
       </div>
     `).join('');
-
-    // Timer
-    this.currentTimeLeft = data.timeLimit;
-    this.totalTime = data.timeLimit;
-    this.startTimer();
+    
+    this.startTimer(data.timeLimit);
   },
 
-  startTimer() {
+  startTimer(timeLimit) {
     clearInterval(this.timerInterval);
+    this.currentTimeLeft = timeLimit;
+    this.totalTime = timeLimit;
     const bar = document.getElementById('host-timer-bar');
     const num = document.getElementById('host-timer-num');
 
@@ -218,51 +221,59 @@ const hostGame = {
 
   renderLeaderboard(elId, leaderboard) {
     const listEl = document.getElementById(elId);
-    const podiumEl = document.getElementById(elId === 'host-leaderboard' ? 'host-podium' : 'player-podium');
-
-    // Filter top 3 for podium
-    const top3 = leaderboard.slice(0, 3);
-    const rest = leaderboard.slice(3);
-
-    if (podiumEl) {
-      if (top3.length > 0) {
-        podiumEl.style.display = 'flex';
-        podiumEl.innerHTML = `
-          ${top3[1] ? `
-          <div class="podium-step step-2">
-            <div class="podium-avatar">${app.avatar(top3[1].avatar)}</div>
-            <div class="podium-name">${top3[1].name}</div>
-            <div class="podium-score">${top3[1].score.toLocaleString()}</div>
-            <div class="podium-rank-circle">2</div>
-          </div>` : ''}
-          <div class="podium-step step-1">
-            <div class="podium-avatar">${app.avatar(top3[0].avatar)}</div>
-            <div class="podium-name">${top3[0].name}</div>
-            <div class="podium-score">${top3[0].score.toLocaleString()}</div>
-            <div class="podium-rank-circle">1</div>
-          </div>
-          ${top3[2] ? `
-          <div class="podium-step step-3">
-            <div class="podium-avatar">${app.avatar(top3[2].avatar)}</div>
-            <div class="podium-name">${top3[2].name}</div>
-            <div class="podium-score">${top3[2].score.toLocaleString()}</div>
-            <div class="podium-rank-circle">3</div>
-          </div>` : ''}
-        `;
-      } else {
-        podiumEl.style.display = 'none';
-      }
-    }
+    if (!listEl) return;
 
     const medals = ['🥇', '🥈', '🥉'];
     listEl.innerHTML = leaderboard.map((p, i) => `
-      <div class="leaderboard-item ${p.name === playerGame.name ? 'current-player' : ''}" style="animation-delay:${i*0.08}s">
+      <div class="leaderboard-item" style="animation-delay:${i*0.05}s">
         <div class="lb-rank">${p.rank <= 3 ? medals[p.rank-1] : p.rank}</div>
         <div class="lb-avatar">${app.avatar(p.avatar)}</div>
         <div class="lb-name">${p.name}</div>
         <div class="lb-score">${p.score.toLocaleString()} pts</div>
       </div>
     `).join('');
+  },
+
+  renderPodium(elId, leaderboard) {
+    const podiumEl = document.getElementById(elId);
+    if (!podiumEl) return;
+    
+    const top3 = leaderboard.slice(0, 3);
+    if (top3.length === 0) {
+      podiumEl.style.display = 'none';
+      return;
+    }
+
+    podiumEl.style.display = 'flex';
+    podiumEl.innerHTML = `
+      ${top3[1] ? `
+      <div class="podium-step step-2">
+        <div class="podium-avatar">${app.avatar(top3[1].avatar)}</div>
+        <div class="podium-name">${top3[1].name}</div>
+        <div class="podium-score">${top3[1].score.toLocaleString()} pts</div>
+        <div class="podium-rank-circle">2</div>
+      </div>` : ''}
+      <div class="podium-step step-1">
+        <div class="podium-avatar">${app.avatar(top3[0].avatar)}</div>
+        <div class="podium-name">${top3[0].name}</div>
+        <div class="podium-score">${top3[0].score.toLocaleString()} pts</div>
+        <div class="podium-rank-circle">1</div>
+      </div>
+      ${top3[2] ? `
+      <div class="podium-step step-3">
+        <div class="podium-avatar">${app.avatar(top3[2].avatar)}</div>
+        <div class="podium-name">${top3[2].name}</div>
+        <div class="podium-score">${top3[2].score.toLocaleString()} pts</div>
+        <div class="podium-rank-circle">3</div>
+      </div>` : ''}
+    `;
+  },
+
+  hideAll() {
+    ['host-lobby', 'host-question', 'host-results', 'host-gameover'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
   },
 
   reset() {
@@ -338,14 +349,20 @@ socket.on('question-results', (data) => {
 
 socket.on('game-over', ({ leaderboard }) => {
   clearInterval(hostGame.timerInterval);
-  // Host just redirects home after seeing final leaderboard
-  if (leaderboard && leaderboard.length) {
-    document.getElementById('host-question').style.display = 'none';
-    document.getElementById('host-results').style.display = 'block';
-    hostGame.renderLeaderboard('host-leaderboard', leaderboard);
-    document.getElementById('result-bars').innerHTML = '<div style="color:var(--yellow);font-size:2rem;width:100%;text-align:center;">🏆 Fim do Jogo!</div>';
-    document.getElementById('btn-next-question').textContent = '🏠 Voltar ao Início';
-    document.getElementById('btn-next-question').onclick = () => { app.goTo('home'); hostGame.reset(); };
+  
+  if (leaderboard && leaderboard.length > 0) {
+    hostGame.hideAll();
+    document.getElementById('host-gameover').style.display = 'block';
+    
+    // Set winner name
+    const winner = leaderboard[0];
+    document.getElementById('host-winner-name').textContent = winner.name;
+    
+    // Render final podium and leaderboard
+    hostGame.renderPodium('host-final-podium', leaderboard);
+    hostGame.renderLeaderboard('host-final-leaderboard', leaderboard);
+    
+    app.showToast(`🏆 Parabéns, ${winner.name}!`);
   } else {
     app.goTo('home');
     hostGame.reset();

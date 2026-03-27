@@ -28,6 +28,7 @@ const playerGame = {
   currentTimeLeft: 20,
   totalTime: 20,
   hasAnswered: false,
+  rankingTimeout: null,
 
   init(data) {
     this.pin = document.getElementById('input-pin').value.trim();
@@ -47,20 +48,28 @@ const playerGame = {
   },
 
   showQuestion(data) {
+    if (this.rankingTimeout) clearTimeout(this.rankingTimeout);
     this.hideAll();
-    this.hasAnswered = false;
     document.getElementById('player-question').style.display = 'block';
     document.getElementById('player-question-text').textContent = data.question;
-    
-    // Reset buttons
-    const buttons = document.querySelectorAll('.answer-btn');
-    buttons.forEach((btn, i) => {
-      btn.disabled = false;
-      btn.classList.remove('shake', 'correct', 'wrong');
-      const textSpan = document.getElementById(`ans-${i}-text`);
-      if (textSpan) textSpan.textContent = data.options[i];
-    });
+    this.hasAnswered = false;
 
+    const specialImg = document.getElementById('player-special-img');
+    if (data.index === data.total - 1) {
+      specialImg.style.display = 'block';
+    } else {
+      specialImg.style.display = 'none';
+    }
+
+    // Update buttons
+    for (let i = 0; i < 4; i++) {
+      const btn = document.getElementById(`ans-${i}`);
+      const txt = document.getElementById(`ans-${i}-text`);
+      btn.disabled = false;
+      btn.classList.remove('shake', 'correct', 'wrong'); // Preserve existing class removal
+      txt.textContent = data.options[i];
+    }
+    
     this.currentTimeLeft = data.timeLimit;
     this.totalTime = data.timeLimit;
     this.startTimer();
@@ -153,7 +162,8 @@ const playerGame = {
     // First show feedback for 3 seconds
     this.showAnswerResult();
     
-    setTimeout(() => {
+    if (this.rankingTimeout) clearTimeout(this.rankingTimeout);
+    this.rankingTimeout = setTimeout(() => {
       // If we are still in this state (not next question yet)
       this.hideAll();
       const rankingPage = document.getElementById('player-ranking');

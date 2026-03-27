@@ -34,6 +34,9 @@ npm start
 
 _O servidor estará acessível em `http://localhost:3000`._
 
+> [!IMPORTANT]
+> **Senha do Host**: Para acessar a área de criação de quiz, a senha padrão é `innova2026`. Você pode alterar isso no arquivo `server/server.js`.
+
 ### 3. Abrir para o Mundo (Link Externo)
 
 Se você for realizar um evento e precisar que os jogadores acessem de fora da sua rede, rode o seguinte comando em um segundo terminal:

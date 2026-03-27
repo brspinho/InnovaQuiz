@@ -12,6 +12,22 @@
 <!-- ─── TOAST ────────────────────────────────────── -->
 <div id="toast"></div>
 
+<!-- ─── AUTH MODAL ────────────────────────────────── -->
+<div id="auth-modal" class="modal-overlay">
+  <div class="modal-content card">
+    <h2>🔒 Área do <span class="text-yellow">Host</span></h2>
+    <p>Digite a senha para gerenciar o quiz:</p>
+    <div id="auth-error" class="text-danger mt-1 mb-1" style="display:none; font-size:0.85rem;">Senha incorreta!</div>
+    <div class="input-group">
+      <input type="password" id="host-pass-input" placeholder="••••••••" />
+    </div>
+    <div style="display:flex; gap:0.5rem;">
+      <button class="btn btn-secondary btn-full" onclick="hostAuth.hide()">Cancelar</button>
+      <button class="btn btn-primary btn-full" onclick="hostAuth.verify()">Entrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════ -->
 <!-- PAGE: HOME                                      -->
 <!-- ═══════════════════════════════════════════════ -->
@@ -109,6 +125,8 @@
         <span id="host-answer-progress" class="answer-progress">0 / 0 responderam</span>
       </div>
 
+      <img id="host-special-img" src="assets/homem-inovacao.png" class="special-question-image" style="display:none;" />
+
       <div class="timer-wrap">
         <div class="timer-bar-bg">
           <div class="timer-bar" id="host-timer-bar"></div>
@@ -123,16 +141,26 @@
 
     <!-- RESULTS VIEW -->
     <div id="host-results">
-      <h3 style="margin-bottom:1rem;">📊 Resultados da Pergunta</h3>
+      <h2 class="section-title">Resultados da Pergunta</h2>
       <div class="result-bars" id="result-bars"></div>
       
-      <div id="host-podium" class="podium-container" style="display:none;"></div>
+      <h3 class="mt-2 mb-1">Leaderboard</h3>
+      <div id="host-leaderboard" class="leaderboard-list"></div>
       
-      <h3 style="margin-bottom:0.75rem;">🏆 Placar</h3>
-      <div class="leaderboard-list" id="host-leaderboard"></div>
-      <button class="btn btn-primary btn-lg" id="btn-next-question" onclick="hostGame.nextQuestion()">
-        ▶ Próxima Pergunta
-      </button>
+      <button id="btn-next-question" class="btn btn-primary btn-lg btn-full" onclick="hostGame.nextQuestion()">▶ Próxima Pergunta</button>
+    </div>
+
+    <div id="host-gameover" style="display:none;">
+      <div class="winner-announcement">
+        <p class="pin-label">O Grande Vencedor é...</p>
+        <span class="winner-name" id="host-winner-name">—</span>
+      </div>
+      
+      <div class="podium-container" id="host-final-podium"></div>
+      
+      <div id="host-final-leaderboard" class="leaderboard-list"></div>
+      
+      <button class="btn btn-secondary btn-lg btn-full mt-2" onclick="app.goTo('home')">🏠 Voltar ao Início</button>
     </div>
 
   </div>
@@ -193,6 +221,8 @@
         </div>
         <div class="timer-number" id="player-timer-num">20</div>
       </div>
+
+      <img id="player-special-img" src="assets/homem-inovacao.png" class="special-question-image" style="display:none;" />
 
       <div class="player-question-text" id="player-question-text">—</div>
 

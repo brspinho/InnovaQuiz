@@ -20,6 +20,7 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
+const HOST_PASSWORD = process.env.HOST_PASSWORD || 'innovation2026';
 
 // Load predefined quizzes
 let predefinedQuizzes = [];
@@ -48,9 +49,14 @@ io.on('connection', (socket) => {
     socket.emit('quizzes-list', predefinedQuizzes);
   });
 
+  socket.on('check-host-password', (pass, callback) => {
+    const isValid = pass === HOST_PASSWORD;
+    callback(isValid);
+  });
+
   // ── HOST: Create game ──────────────────────────────────────────────────────
   socket.on('create-game', ({ quiz }) => {
-    if (!quiz || !Array.isArray(quiz) || quiz.length === 0) {
+    if (!quiz || !Array.isArray(quiz)) {
       return socket.emit('error', { message: 'Quiz inválido.' });
     }
     const result = engine.createRoom(socket.id, quiz);
@@ -99,7 +105,7 @@ io.on('connection', (socket) => {
       });
     }
 
-    console.log(`[JOIN] ${trimmedName} joined ${pin} (${result.playerCount}/100)`);
+    console.log(`[JOIN] ${result.playerName} joined/rejoined ${pin}`);
   });
 
   // ── PLAYER: Submit answer ──────────────────────────────────────────────────

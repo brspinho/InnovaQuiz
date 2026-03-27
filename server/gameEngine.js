@@ -33,45 +33,38 @@ function calculateScore(timeLeft, totalTime) {
  */
 function createRoom(hostId, quiz) {
   const pin = generatePin();
-  const room = {
+  rooms.set(pin, {
     pin,
     hostId,
-    quiz, // [{question, options:[4], correct}]
-    players: new Map(), // socketId -> {name, score, answers}
-    state: 'lobby',    // lobby | question | results | leaderboard | ended
+    quiz,
+    players: new Map(), // socketId -> player
+    state: 'lobby',
     currentQuestion: -1,
     questionStartTime: null,
-    answers: new Map(), // socketId -> {index, timeLeft}
-    createdAt: Date.now(),
-  };
-  rooms.set(pin, room);
+    answers: new Map(),
+    lastResults: null,
+  });
   return { pin, totalQuestions: quiz.length };
 }
 
-/**
- * Join existing room as player
- */
-function joinRoom(pin, socketId, playerName) {
+function joinRoom(pin, socketId, name) {
   const room = rooms.get(pin);
   if (!room) return { error: 'Sala não encontrada.' };
-  if (room.state !== 'lobby') return { error: 'Jogo já iniciado.' };
-  if (room.players.size >= 100) return { error: 'Sala cheia (máx 100 jogadores).' };
+  if (room.state !== 'lobby') return { error: 'O jogo já começou.' };
+  if (room.players.size >= 100) return { error: 'Sala cheia (máx 100).' };
 
-  // Check duplicate name
-  const nameTaken = [...room.players.values()].some(p => p.name.toLowerCase() === playerName.toLowerCase());
-  if (nameTaken) return { error: 'Nome já em uso. Escolha outro.' };
-
-  room.players.set(socketId, {
-    id: socketId,
-    name: playerName,
+  const player = {
+    socketId,
+    name,
     score: 0,
-    avatar: Math.floor(Math.random() * 8), // 0-7 avatar index
-  });
+    avatar: room.players.size % 8, 
+  };
 
-  return {
-    success: true,
-    playerName,
+  room.players.set(socketId, player);
+  return { 
+    playerName: name, 
     playerCount: room.players.size,
+    avatar: player.avatar
   };
 }
 
@@ -83,7 +76,7 @@ function removePlayer(pin, socketId) {
   if (room) {
     room.players.delete(socketId);
     if (room.players.size === 0 && room.hostId !== socketId) {
-      // Keep room alive if host is still there
+      rooms.delete(pin);
     }
   }
 }
@@ -209,6 +202,7 @@ function nextQuestion(pin) {
   room.state = 'question';
   room.answers = new Map();
   room.questionStartTime = Date.now();
+  room.lastResults = null; // Clear previous results
 
   return { done: false, question: buildQuestionPayload(room) };
 }
@@ -224,6 +218,7 @@ function buildQuestionPayload(room) {
     playerCount: room.players.size,
   };
 }
+
 
 function getSortedLeaderboard(room) {
   return [...room.players.values()]
