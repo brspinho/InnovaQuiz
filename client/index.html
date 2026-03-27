@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="InnovaQuiz – Jogo de quiz em tempo real para até 100 jogadores simultâneos." />
+  <title>InnovaQuiz</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ─── TOAST ────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PAGE: HOME                                      -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="home-hero">
+    <h1>Innova<span style="color:var(--white)">Quiz</span></h1>
+    <p>Quiz em tempo real para até <strong>100 jogadores</strong> simultâneos</p>
+
+    <div class="home-buttons">
+      <button class="btn btn-primary btn-lg btn-full" id="btn-go-host" onclick="app.goTo('host-setup')">
+        🎮 Criar Quiz (Host)
+      </button>
+      <button class="btn btn-secondary btn-lg btn-full" onclick="app.goTo('player-join')">
+        👤 Entrar como Jogador
+      </button>
+    </div>
+
+    <div class="feature-pills">
+      <div class="pill"><span>⚡</span> Tempo real</div>
+      <div class="pill"><span>👥</span> Até 100 jogadores</div>
+      <div class="pill"><span>🏆</span> Ranking ao vivo</div>
+      <div class="pill"><span>📱</span> Mobile friendly</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PAGE: HOST SETUP                                -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="page-host-setup" class="page">
+  <nav class="navbar">
+    <div class="logo">Innova<span>Quiz</span></div>
+    <button class="btn btn-secondary" onclick="app.goTo('home')">← Voltar</button>
+  </nav>
+
+  <div style="padding:2rem; display:flex; justify-content:center;">
+    <div class="setup-container">
+      <h2>✏️ Criar <span class="text-yellow">Quiz</span></h2>
+
+      <div class="input-group">
+        <label>Ou escolha um modelo pronto:</label>
+        <div style="display:flex; gap:0.5rem;">
+          <select id="predefined-quizzes-select" style="flex:1;">
+            <option value="">-- Selecione um Quiz --</option>
+          </select>
+          <button class="btn btn-secondary" onclick="hostSetup.loadSelectedQuiz()">Carregar</button>
+        </div>
+      </div>
+
+      <div id="questions-list" class="questions-list"></div>
+
+      <div class="setup-actions">
+        <button class="btn btn-secondary" id="btn-add-question" onclick="hostSetup.addQuestion()">
+          + Adicionar Pergunta
+        </button>
+        <button class="btn btn-primary" id="btn-create-game" onclick="hostSetup.createGame()">
+          🚀 Criar Jogo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PAGE: HOST GAME                                 -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="page-host-game" class="page">
+  <div class="host-header">
+    <div class="logo">Innova<span>Quiz</span></div>
+    <div class="pin-display">
+      <div class="pin-label">PIN do jogo</div>
+      <div class="pin-value" id="host-pin-value">------</div>
+    </div>
+    <button class="btn btn-danger" onclick="hostGame.endGame()">Encerrar</button>
+  </div>
+
+  <div class="host-main">
+
+    <!-- LOBBY -->
+    <div id="host-lobby">
+      <h2>Aguardando jogadores…</h2>
+      <div id="player-count-display">0</div>
+      <div class="player-count-label">jogadores conectados</div>
+      <div id="player-bubbles" class="player-bubbles"></div>
+      <button class="btn btn-primary btn-lg" id="btn-start-game" onclick="hostGame.startGame()" disabled>
+        ▶ Iniciar Jogo
+      </button>
+      <p class="text-gray mt-2" style="font-size:0.85rem;">Mínimo 1 jogador para iniciar</p>
+    </div>
+
+    <!-- QUESTION VIEW -->
+    <div id="host-question">
+      <div class="question-meta">
+        <span class="q-counter" id="host-q-counter">Pergunta 1/1</span>
+        <span id="host-answer-progress" class="answer-progress">0 / 0 responderam</span>
+      </div>
+
+      <div class="timer-wrap">
+        <div class="timer-bar-bg">
+          <div class="timer-bar" id="host-timer-bar"></div>
+        </div>
+        <div class="timer-number" id="host-timer-num">20</div>
+      </div>
+
+      <div class="big-question" id="host-question-text">—</div>
+
+      <div class="host-options-grid" id="host-options-grid"></div>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div id="host-results">
+      <h3 style="margin-bottom:1rem;">📊 Resultados da Pergunta</h3>
+      <div class="result-bars" id="result-bars"></div>
+      
+      <div id="host-podium" class="podium-container" style="display:none;"></div>
+      
+      <h3 style="margin-bottom:0.75rem;">🏆 Placar</h3>
+      <div class="leaderboard-list" id="host-leaderboard"></div>
+      <button class="btn btn-primary btn-lg" id="btn-next-question" onclick="hostGame.nextQuestion()">
+        ▶ Próxima Pergunta
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PAGE: PLAYER JOIN                               -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="page-player-join" class="page">
+  <div class="join-card card">
+    <h2>🎮 Entrar no Jogo</h2>
+    <p>Digite o PIN do host e seu nome</p>
+
+    <div id="join-error"></div>
+
+    <div class="input-group">
+      <label for="input-pin">PIN do Jogo</label>
+      <input type="text" id="input-pin" maxlength="6" placeholder="000000" style="font-size:2rem;font-weight:900;letter-spacing:6px;text-align:center;" />
+    </div>
+
+    <div class="input-group">
+      <label for="input-name">Seu Nome</label>
+      <input type="text" id="input-name" maxlength="20" placeholder="Ex: João" />
+    </div>
+
+    <button class="btn btn-primary btn-lg btn-full mt-1" onclick="playerJoin.join()">
+      Entrar →
+    </button>
+    <button class="btn btn-secondary btn-full mt-1" onclick="app.goTo('home')">
+      ← Voltar
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- PAGE: PLAYER GAME                               -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="page-player-game" class="page">
+  <div class="player-header">
+    <div class="player-name-badge" id="player-name-badge">—</div>
+    <div class="player-score-badge" id="player-score-badge">0 pts</div>
+  </div>
+
+  <div class="player-main">
+
+    <!-- WAITING -->
+    <div id="player-waiting">
+      <div class="waiting-spinner"></div>
+      <h3>Aguardando o host…</h3>
+      <p class="text-gray mt-1">Fique pronto! O jogo vai começar em breve.</p>
+    </div>
+
+    <!-- QUESTION -->
+    <div id="player-question">
+      <div class="timer-wrap">
+        <div class="timer-bar-bg">
+          <div class="timer-bar" id="player-timer-bar"></div>
+        </div>
+        <div class="timer-number" id="player-timer-num">20</div>
+      </div>
+
+      <div class="player-question-text" id="player-question-text">—</div>
+
+      <div class="answer-grid" id="answer-grid">
+        <button class="answer-btn opt-a" id="ans-0" onclick="playerGame.answer(0)">
+          <span class="btn-icon">▲</span>
+          <span id="ans-0-text">Opção A</span>
+        </button>
+        <button class="answer-btn opt-b" id="ans-1" onclick="playerGame.answer(1)">
+          <span class="btn-icon">◆</span>
+          <span id="ans-1-text">Opção B</span>
+        </button>
+        <button class="answer-btn opt-c" id="ans-2" onclick="playerGame.answer(2)">
+          <span class="btn-icon">●</span>
+          <span id="ans-2-text">Opção C</span>
+        </button>
+        <button class="answer-btn opt-d" id="ans-3" onclick="playerGame.answer(3)">
+          <span class="btn-icon">■</span>
+          <span id="ans-3-text">Opção D</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div id="player-feedback">
+      <div class="feedback-icon" id="feedback-icon">✅</div>
+      <h3 id="feedback-title">Correto!</h3>
+      <div class="points-earned" id="points-earned">+1500</div>
+      <p class="feedback-wait text-gray mt-2">Aguardando próxima pergunta…</p>
+    </div>
+
+    <!-- INTERIM RANKING -->
+    <div id="player-ranking">
+      <h3 class="text-yellow" style="margin-bottom:0.5rem;">Sua posição</h3>
+      <div class="rank-position" id="rank-position">#1</div>
+      <div class="rank-label text-gray">de <span id="rank-total">0</span> jogadores</div>
+      <div class="leaderboard-list mt-2" id="player-leaderboard"></div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="player-gameover">
+      <div class="confetti-wrap">🎉</div>
+      <h2 class="text-yellow">Fim de Jogo!</h2>
+      
+      <div id="player-podium" class="podium-container"></div>
+      
+      <div class="leaderboard-list mt-2" id="gameover-leaderboard"></div>
+      <button class="btn btn-primary btn-lg mt-2" onclick="app.goTo('home')">Jogar Novamente</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── Scripts ────────────────────────────────── -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/app.js"></script>
+<script src="js/host.js"></script>
+<script src="js/player.js"></script>
+
+</body>
+</html>

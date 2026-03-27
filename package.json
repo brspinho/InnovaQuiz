@@ -1,0 +1,21 @@
+{
+  "name": "innovaquiz",
+  "version": "1.0.0",
+  "description": "InnovaQuiz - Real-time multiplayer quiz game",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "install-all": "npm install && cd server && npm install"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "quiz",
+    "kahoot",
+    "multiplayer",
+    "socket.io"
+  ],
+  "author": "",
+  "license": "ISC"
+}

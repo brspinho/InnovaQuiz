@@ -1,0 +1,79 @@
+[
+  {
+    "id": "intro",
+    "title": "Bem-vindo ao InnovaQuiz!",
+    "questions": [
+      {
+        "question": "Qual a melhor entidade acadêmica da UFS? ",
+        "options": ["Innovation Hub", "Innovation Hub", "Innovation Hub", "Innovation Hub"],
+        "correct": [0, 1, 2, 3]
+      },
+      {
+        "question": "No ecossistema de Startups, o que significa a sigla MVP?",
+        "options": ["Most Valuable Programmer", "Maximum Value Process", "Minimum Viable Product", "Main Version Project"],
+        "correct": [2]
+      },
+      {
+        "question": "No Scrum, qual o nome do ciclo de tempo fixo para realizar as tarefas?",
+        "options": ["Sprint", "Daily", "Backlog", "Milestone"],
+        "correct": [0]
+      },
+      {
+        "question": "Quem é a 'mãe da programação', tendo escrito o primeiro algoritmo da história?",
+        "options": ["Grace Hopper", "Marie Curie", "Joan Clarke", "Ada Lovelace"],
+        "correct": [3]
+      },
+      {
+        "question": "Qual a origem real do termo 'Bug' na computação?",
+        "options": ["Erro de digitação", "Uma mariposa real travou um computador", "Curto por poeira", "Nome de um hacker"],
+        "correct": [1]
+      },
+      {
+        "question": "Na sequência lógica de Fibonacci (1, 1, 2, 3, 5, 8...), qual é o próximo número?",
+        "options": ["11", "13", "14", "15"],
+        "correct": [1]
+      },
+      {
+        "question": "Como se chama a apresentação curta e direta (geralmente de 3 a 5 minutos) usada para 'vender' uma ideia para investidores?",
+        "options": ["Pitch", "Sprint", "Review", "Talk"],
+        "correct": [0]
+      },
+      {
+        "question": "Como são chamadas as habilidades comportamentais, como liderança e comunicação, tão valorizadas na Tech?",
+        "options": ["Power Skills", "Hard Skills", "Tech Skills", "Soft Skills"],
+        "correct": [3]
+      },
+      {
+        "question": "Qual linguagem tem como símbolo uma xícara de café?",
+        "options": ["Python", "JavaScript", "Java", "C++"],
+        "correct": [2]
+      },
+      {
+        "question": "O que define uma inovação como Disruptiva?",
+        "options": ["Cria um novo mercado ou transforma um existente", "É apenas uma melhoria incremental", "É uma cópia de uma inovação existente", "É uma inovação que não é aceita pelo mercado"],
+        "correct": [0]
+      },
+      {
+        "question": "Quem é  O HOMEM DA INOVAÇÃO?",
+        "options": ["Steve Jobs", "Irandi", "Bill Gates", "Jeff Bezos"],
+        "correct": [1]
+      }
+    ]
+  },
+  {
+    "id": "default-2",
+    "title": "Tecnologia",
+    "questions": [
+      {
+        "question": "Quem fundou a Microsoft?",
+        "options": ["Steve Jobs", "Elon Musk", "Bill Gates", "Jeff Bezos"],
+        "correct": [2]
+      },
+      {
+        "question": "Quais são linguagens de programação?",
+        "options": ["HTML", "Python", "JavaScript", "Windows"],
+        "correct": [1, 2]
+      }
+    ]
+  }
+]
